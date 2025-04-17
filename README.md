@@ -170,16 +170,18 @@ Termination of the algorithm when no improvement over n repeated iterations.
 
 ## 5. Results
 
-> Results indicated that the proposed PSO approach achieved **higher accuracy**, **better robustness**, and **greater diversity** than baseline PSO variants and other metaheuristics.
+> Results indicated that the proposed PSO approach achieved higher accuracy, better robustness, and greater diversity than baseline PSO variants and other metaheuristics.
 
 ---
 
 ## 6. Limitations & Discussion
 
-- Parameters (e.g., swarm size, number of iterations) are **predefined** and **not adaptive**
-- May not suit all datasets
-- No online parameter tuning during training
-- Future evaluations may consider:
+- Choice of parameters is predetermined in agreement with previous studies
+  -  Consequences: no adaptation to the characteristics of the dataset. In particular with reference to swarm size.
+
+- No possible corrections during training(number of iterations before forced termination and other parameters).
+
+A more comprehensive evaluation may be considered
   - **Computational efficiency**
   - **Convergence speed**
   - **Scalability** to larger and more constrained portfolios
@@ -188,13 +190,11 @@ Termination of the algorithm when no improvement over n repeated iterations.
 
 ## 7. MATLAB Implementation
 
-Implemented in MATLAB based on:
-
-**Deng, Lin & Lo (2012)**
+Implemented in MATLAB based on: Deng, Lin & Lo (2012)
 
 Includes:
 
-- Linearly decreasing inertia
+- Linearly decreasing inertia 
 - Dynamic acceleration coefficients
 - Cardinality constraints
 - Mutation-based diversity enhancement
