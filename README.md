@@ -67,75 +67,64 @@ The following enhancements were implemented:
 ### 3.1 Reflection Strategy  
 **Reference:** [Paterlini & Krink (2006)](https://www.sciencedirect.com/science/article/pii/S0167947304003962?casa_token=wUdVC5asyv0AAAAA:Ca0fEgmuH6hQTQSozKqcC91po00mFKsTYjN6Ral3kR6ENaqzoK8fiD4kMMFy3krr_LQYSw7w2x38)  
 
-To prevent particles from stagnating at local minima or exiting the search space:
+To prevent new positions from leaving the search space and causing stagnation towards local optima, the reflection strategy reflects positions back into the search space if they exceed boundaries, improving solution quality by facilitating exploration of a wider search area and escape from local minima.
 
-- When a particle exceeds boundaries, it is **reflected** back into the search space:
-  
-  x_i = 
-  \begin{cases}
-  x_{\text{max}} - (x_i - x_{\text{max}}), & \text{if } x_i > x_{\text{max}} \\
-  x_{\text{min}} + (x_{\text{min}} - x_i), & \text{if } x_i < x_{\text{min}} \\
-  x_i, & \text{otherwise}
-  \end{cases}
-  \]
+$x_{i,j}^t = x_{i,j}^t + 2(x_j^l - x_{i,j}^t) \quad \text{if} \quad x_{i,j}^t < x_j^l$
+
+$x_{i,j}^t = x_{i,j}^t - 2(x_{i,j}^t - x_j^u) \quad \text{if} \quad x_{i,j}^t > x_j^u$
+
+$x_{i,j}^t = x_j^l, \quad \text{if} \quad x_{i,j}^t < x_j^l$
+
+$x_{i,j}^t = x_j^u \quad \text{if} \quad x_{i,j}^t > x_j^u$
 
 ---
 
-### 3.2 🧮 Cardinality Constraint Handling
+### 3.2 Cardinality Constraint Handling
 
-When the updated number of assets \( K_{\text{new}} \neq K \):
+To handle cardinality constraints, where K is the desired number of assets in the portfolio, assets are added or removed from a set Q based on whether the number of assets after updating positions, K_new ≠ K. 
 
-- If \( K_{\text{new}} > K \):  
-  Remove \( K_{\text{new}} - K \) assets with **lowest weights**.
-  
-- If \( K_{\text{new}} < K \):  
-  Add assets from a candidate set \( Q \) with **minimal proportional values**.
+- For cases where K_new > K, the study removes he smallest assets and the remaining ones are updated,
+- while for K_new ≤ K, it randomly adds assets from Q with minimum proportional values. 
+
+$x_i = \epsilon_i + \frac{s_i}{\sum_{j \in Q, s_j > \epsilon_i} s_i} \left( 1 - \sum_{j \in Q} \epsilon_j \right)
+$
 
 ---
 
-### 3.3 📉 Linearly Decreasing Inertia Weights  
-**Reference:** *Tripathi, Bandyopadhyay & Pal (2007)*
+### 3.3 Linearly Decreasing Inertia Weights  
+Reference: [Tripathi, Bandyopadhyay & Pal (2007)](https://www.sciencedirect.com/science/article/pii/S0020025507003155?casa_token=woihjR8-WGoAAAAA:Whl2dqiHHjwGJumMYLsS5v_qVFjVzCKLDaBjXx12CuSUwvvB-0ezWoCFEFwZJ67cMKAIySOVIrZq)
 
-The inertia weight \( w \) controls the balance between **exploration** and **exploitation**.
+The inertia weight w in PSO controls the balance between exploration and exploitation, with high values promoting global exploration and low values emphasizing local exploitation. 
+In complex problems like CCMPO, where both strategies are crucial, a time-varying w. This approach linearly reduces w over time, allowing particles to explore extensively initially and exploit gradually as the search progresses. Typically, w starts at 0.9 and ends at 0.4, adapting to the algorithm's evolving understanding of the search space throughout its execution.
 
-- High \( w \): promotes exploration  
-- Low \( w \): encourages exploitation
 
-To balance both, \( w \) is decreased **linearly**:
-
-\[
-w(t) = w_{\text{start}} - \left( \frac{w_{\text{start}} - w_{\text{end}}}{T} \right) t
-\]
+$w(t) = (w(0) - w(n_t)) \cdot \frac{(n_t - t)}{n_t} + w(n_t)
+$
 
 Where:
 
-- \( w_{\text{start}} = 0.9 \)
-- \( w_{\text{end}} = 0.4 \)
-- \( T \) = total number of iterations
-- \( t \) = current iteration
+- $w_{\text{start}} = 0.9$
+- $w_{\text{end}} = 0.4$
+- $T$ = total number of iterations
+- $t$ = current iteration
 
 ---
 
-### 3.4 🧲 Dynamic Acceleration Coefficients  
-**Reference:** *Ratnaweera, Halgamuge & Watson (2004)*
+### 3.4 Dynamic Acceleration Coefficients  
+Reference: [Ratnaweera, Halgamuge & Watson (2004)](https://ieeexplore.ieee.org/abstract/document/1304846)
 
-The cognitive and social coefficients \( c_1 \) and \( c_2 \) are dynamically updated:
-
-- If \( c_1 > c_2 \): particles favor personal best, leading to **divergence**  
-- If \( c_2 > c_1 \): particles converge prematurely to global best
-
+If c1 > c2, each particle has a stronger attraction to its own best position, and excessive wandering occurs. 
+On the other hand, if c2 > c1, particles are most attracted to the global best position, which causes them to rush towards the optima prematurely.  
 The coefficients vary over time:
 
-\[
-c_1(t) = c_{1i} - \left( \frac{c_{1i} - c_{1f}}{T} \right) t,\quad
-c_2(t) = c_{2i} + \left( \frac{c_{2f} - c_{2i}}{T} \right) t
-\]
+$c_1(t) = (c_{1,min} - c_{1,max}) \frac{t}{n_t} + c_{1,max}$
 
-Where \( i \) and \( f \) denote initial and final values.
+$c_2(t) = (c_{2,max} - c_{2,min}) \frac{t}{n_t} + c_{2,min}$
+
 
 ---
 
-### 3.5  Mutation Operator for Diversity  
+### 3.5 Mutation Operator for Diversity  
 **Reference:** *Tripathi et al., 2007*
 
 To increase diversity, randomly **mutate** a selected dimension \( g_k \):
