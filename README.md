@@ -1,10 +1,13 @@
 # PPSO-for-CCMPO
-Particle Swarm Optimization (PSO) applied to solve the Cardinality Constrained Markowitz Portfolio Optimization (CCMPO) problem
+Particle Swarm Optimization (PSO) applied to solve the Cardinality Constrained Markowitz Portfolio Optimization (CCMPO) problem.
+
+This work draws inspiration from and seeks to replicate the study by [Deng, Lin, and Lo (2012)](https://www.sciencedirect.com/science/article/abs/pii/S0957417411014527), while also considering its strengths and limitations.
+
 
 --- 
 
 1. Portfolio Optimization  
-2. Cardinality-Constrained Markowitz Portfolio Optimization (CCMPO)  
+2. Cardinality-Constrained Markowitz Portfolio Optimization (CCMPO)
 3. Performance Evaluation  
 4. Particle Swarm Optimization (PSO) Models  
 5. Results  
@@ -17,10 +20,17 @@ Particle Swarm Optimization (PSO) applied to solve the Cardinality Constrained M
 
 Portfolio optimization aims to select the best combination of assets to either:
 
-- **Maximize return** for a given level of risk, or  
-- **Minimize risk** for a given level of return.  
+- **Maximize return** for a given level of risk, or
+- **Minimize risk** for a given level of return.
+-   
+$\text{Minimize} \quad \lambda \left[ \sum_{i=1}^{N} \sum_{j=1}^{N} x_i x_j \sigma_{ij} \right] - (1 - \lambda) \left[ \sum_{i=1}^{N} x_i \mu_i \right]$
 
-This is commonly done using **Markowitz's mean-variance optimization** framework.
+$\text{subject to} \sum_{i=1}^{N} x_i = 1$
+
+$0 \leq x_i \leq 1, \quad i = 1, \ldots, N$
+
+
+One classical way of doing this is with the Markowitz's mean-variance optimization framework.
 
 ---
 
@@ -32,25 +42,35 @@ The CCMPO adds a **cardinality constraint** to the classic Markowitz model:
 
 This leads to a combinatorial optimization problem that is **non-convex and NP-hard**.
 
+$\sum_{i=1}^{N} z_i = K$
+
+$z_i= $
+- $1 \quad \text{if asset } i \text{ is included in the portfolio}$
+- $0 \quad \text{otherwise}$
+
+
+$\epsilon z_i \leq x_i \leq \delta z_i, \quad i = 1, \ldots, N$
+
+$z_i \in [0, 1], \quad i = 1, \ldots, N$
+
 ---
 
 ## 3. Proposed PSO Approach for CCMPO
 
-### ✳️ Objective:
-> To reduce stagnation during the initial search phase of the PSO algorithm.
+### Objective:
+> To mitigate stagnation during the initial search phase of the PSO algorithm.
 
 The following enhancements were implemented:
 
 ---
 
-### 3.1 🔁 Reflection Strategy  
-**Reference:** *Paterlini & Krink (2006)*  
+### 3.1 Reflection Strategy  
+**Reference:** [Paterlini & Krink (2006)](https://www.sciencedirect.com/science/article/pii/S0167947304003962?casa_token=wUdVC5asyv0AAAAA:Ca0fEgmuH6hQTQSozKqcC91po00mFKsTYjN6Ral3kR6ENaqzoK8fiD4kMMFy3krr_LQYSw7w2x38)  
 
 To prevent particles from stagnating at local minima or exiting the search space:
 
 - When a particle exceeds boundaries, it is **reflected** back into the search space:
   
-  \[
   x_i = 
   \begin{cases}
   x_{\text{max}} - (x_i - x_{\text{max}}), & \text{if } x_i > x_{\text{max}} \\
@@ -115,7 +135,7 @@ Where \( i \) and \( f \) denote initial and final values.
 
 ---
 
-### 3.5 🧬 Mutation Operator for Diversity  
+### 3.5  Mutation Operator for Diversity  
 **Reference:** *Tripathi et al., 2007*
 
 To increase diversity, randomly **mutate** a selected dimension \( g_k \):
@@ -127,7 +147,7 @@ This helps escape local optima and maintains diversity in the swarm.
 
 ---
 
-### 3.6 🛑 Termination Criteria
+### 3.6 Termination Criteria
 
 The algorithm stops when **no improvement is observed** over **N consecutive iterations**.
 
