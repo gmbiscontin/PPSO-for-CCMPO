@@ -1,8 +1,8 @@
 # PPSO-for-CCMPO
 Particle Swarm Optimization (PSO) applied to solve the Cardinality Constrained Markowitz Portfolio Optimization (CCMPO) problem.
 
-This work draws inspiration from and seeks to replicate the study by [Deng, Lin, and Lo (2012)](https://www.sciencedirect.com/science/article/abs/pii/S0957417411014527), while also considering its strengths and limitations.
 
+This work retraces the logical process behind the solid PSO model proposed by [Deng, Lin, and Lo (2012)](https://www.sciencedirect.com/science/article/abs/pii/S0957417411014527), and aims to replicate their study, while also critically examining its strengths and limitations.
 
 --- 
 
@@ -125,51 +125,46 @@ $c_2(t) = (c_{2,max} - c_{2,min}) \frac{t}{n_t} + c_{2,min}$
 ---
 
 ### 3.5 Mutation Operator for Diversity  
-**Reference:** *Tripathi et al., 2007*
+Reference: [Tripathi et al., 2007](https://www.sciencedirect.com/science/article/pii/S0020025507003155?casa_token=ez5EKfyiVCYAAAAA:DoJMbff1ejB5GKbwXBZMt7Wi8eAbUs48w6n8-ScIOcARRd36j7wIMKTY97EnfSCOK8uYRVWgZ0y9)
 
-To increase diversity, randomly **mutate** a selected dimension \( g_k \):
+To enhance diversity the algorithm randomly mutates a randomly selected variable g_k within defined limits, within specified upper and lower limits. The mutation process is governed by a random event flip resulting in either 0 or 1. 
 
-- \( g_k \leftarrow \text{Random}(g_{\min}, g_{\max}) \)
-- Mutation happens with a random binary event (e.g., coin flip)
+$\Delta(t, x) = x \cdot \left( 1 - r^{\left( 1 - \frac{t}{max\_t} \right)^b} \right)$
 
-This helps escape local optima and maintains diversity in the swarm.
+
 
 ---
 
 ### 3.6 Termination Criteria
 
-The algorithm stops when **no improvement is observed** over **N consecutive iterations**.
+Termination of the algorithm when no improvement over n repeated iterations.
 
 ---
 
 ## 4. Performance Evaluation
 
-### 🔍 Comparisons Performed:
+### Comparisons Performed:
 
-- With **classic PSO variants**:  
+- With classic PSO variants:  
   - Basic PSO  
   - PSO-DIV (diversity-enhanced)  
   - PSO-C (constriction coefficient)
   
-- With **other heuristics**:  
+- With other heuristics:  
   - Genetic Algorithms (GA)  
   - Simulated Annealing (SA)  
   - Tabu Search (TS)
 
-### 📈 Evaluation Metrics:
+### Evaluation Metrics:
 
 - **Accuracy**:  
-  - Measured using **return** and **risk (standard deviation)** compared to standard efficient frontiers.
+  - The standard deviation (risk) and return of the best solution for each k were used to compare standard efficient frontiers and measure percentage error respectively. 
   
 - **Robustness**:  
-  - Variance of performance across runs; lower variance = more stable algorithm.
+  - Evaluated as the variance of a performance criterion over a number of trials. A smaller variance indicates that the algorithm's performance remains relatively consistent across different trials, suggesting greater stability and reliability.
   
 - **Diversity**:  
-  - Euclidean distance between each particle's position and swarm mean:
-
-  \[
-  D = \frac{1}{N} \sum_{i=1}^N \left\| x_i - \bar{x} \right\|_2
-  \]
+  - Measured as the Euclidean distance between each particle's position and the average position across all particles in each dimension, then averages these distances across all particles.
 
 ---
 
